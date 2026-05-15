@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oráculo da Galáxia</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  color:white;
+  background:
+    radial-gradient(circle at top,#4b7cff 0,#111a44 35%,#050816 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.container{
+  max-width:430px;
+  margin:auto;
+  padding:25px;
+  min-height:100vh;
+  text-align:center;
+}
+
+.stars{
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient white 1px, transparent 1px;
+  background-size:35px 35px;
+  opacity:.18;
+  z-index:-1;
+}
+
+.logo{
+  font-size:55px;
+  margin-top:25px;
+  filter:drop-shadow(0 0 18px #8fb4ff);
+}
+
+h1{
+  font-size:34px;
+  margin:10px 0;
+  color:#d8e7ff;
+  text-shadow:0 0 18px #6fa8ff;
+}
+
+.sub{
+  color:#b9ccff;
+  font-size:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(12px);
+  border-radius:28px;
+  padding:22px;
+  margin:18px 0;
+  box-shadow:0 0 35px rgba(99,149,255,.25);
+}
+
+button{
+  width:100%;
+  padding:17px;
+  border:none;
+  border-radius:22px;
+  margin-top:14px;
+  font-size:17px;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+  background:linear-gradient(135deg,#2f6bff,#8c5cff,#00d4ff);
+  box-shadow:0 0 25px rgba(87,144,255,.55);
+}
+
+button:hover{
+  transform:scale(1.02);
+}
+
+input{
+  width:100%;
+  padding:15px;
+  border-radius:18px;
+  border:1px solid #8fb4ff;
+  background:rgba(255,255,255,.12);
+  color:white;
+  font-size:15px;
+  margin-top:10px;
+  outline:none;
+}
+
+input::placeholder{
+  color:#c7d6ff;
+}
+
+.hidden{display:none}
+
+.carta{
+  background:linear-gradient(160deg,#0f1b4d,#243b8f,#081226);
+  border:2px solid #9ec4ff;
+  border-radius:22px;
+  padding:22px;
+  margin-top:15px;
+  box-shadow:0 0 25px rgba(127,178,255,.55);
+  animation:aparecer .5s ease;
+}
+
+@keyframes aparecer{
+  from{opacity:0;transform:translateY(20px) scale(.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.emoji{
+  font-size:38px;
+  margin-bottom:8px;
+}
+
+.nome{
+  font-size:22px;
+  font-weight:bold;
+  color:#dceaff;
+}
+
+.texto{
+  color:#d6e1ff;
+  margin-top:10px;
+  line-height:1.5;
+}
+
+footer{
+  font-size:12px;
+  color:#9db8ff;
+  margin-top:25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+
+  <div class="logo">🔮</div>
+  <h1>Oráculo da Galáxia</h1>
+  <p class="sub">Escolha um jogo e receba uma mensagem intuitiva ✨</p>
+
+  <div class="card" id="menu">
+    <button onclick="abrirTresCartas()">3 Cartas — Resposta Certeira</button>
+    <button onclick="abrirSimNao()">1 Carta — Sim ou Não</button>
+  </div>
+
+  <div class="card hidden" id="jogoTres">
+    <h2>3 Cartas</h2>
+    <p class="sub">Pense em uma situação e clique para tirar suas cartas.</p>
+
+    <input id="perguntaTres" placeholder="Escreva sua pergunta aqui...">
+
+    <button onclick="tirarTresCartas()">Tirar 3 cartas ✨</button>
+    <div id="resultadoTres"></div>
+
+    <button onclick="voltar()">Voltar</button>
+  </div>
+
+  <div class="card hidden" id="jogoSimNao">
+    <h2>Sim ou Não</h2>
+    <p class="sub">Faça uma pergunta objetiva e tire uma carta.</p>
+
+    <input id="perguntaSimNao" placeholder="Ex: isso vai dar certo?">
+
+    <button onclick="tirarSimNao()">Tirar carta 🔮</button>
+    <div id="resultadoSimNao"></div>
+
+    <button onclick="voltar()">Voltar</button>
+  </div>
+
+  <footer>
+    Oráculo criado para diversão e reflexão 💙
+  </footer>
+
+</div>
+
+<script>
+const cartas = [
+  {emoji:"🌙", nome:"A Lua", texto:"Nem tudo está claro ainda. Observe melhor antes de agir."},
+  {emoji:"☀️", nome:"O Sol", texto:"A energia está positiva. Clareza, alegria e bons caminhos se aproximam."},
+  {emoji:"⭐", nome:"A Estrela", texto:"Tenha fé. Existe esperança e proteção espiritual nessa situação."},
+  {emoji:"🔥", nome:"A Chama", texto:"É hora de atitude. O movimento vem quando você para de esperar demais."},
+  {emoji:"🌊", nome:"As Águas", texto:"Suas emoções estão falando alto. Respire antes de decidir."},
+  {emoji:"🦋", nome:"A Transformação", texto:"Mudança chegando. Algo precisa sair para algo melhor entrar."},
+  {emoji:"🔑", nome:"A Chave", texto:"A resposta está em uma escolha simples que você talvez esteja evitando."},
+  {emoji:"🌹", nome:"A Rosa", texto:"Existe carinho, beleza e possibilidade de crescimento, mas cuide com expectativas."},
+  {emoji:"⚡", nome:"O Raio", texto:"Uma surpresa pode mudar o rumo das coisas rapidamente."},
+  {emoji:"🧿", nome:"A Proteção", texto:"Você está sendo guiada. Não ignore sua intuição."},
+  {emoji:"🪞", nome:"O Espelho", texto:"A situação reflete algo que você precisa perceber sobre si mesma."},
+  {emoji:"🌌", nome:"O Destino", texto:"Há algo maior se movimentando. Nem tudo depende só de você."}
+];
+
+const simNao = [
+  {emoji:"✅", nome:"Sim", texto:"A energia favorece um sim. Mas faça sua parte com consciência."},
+  {emoji:"❌", nome:"Não", texto:"A resposta tende ao não. Talvez esse caminho não esteja tão alinhado agora."},
+  {emoji:"⏳", nome:"Ainda não", texto:"Não é o momento certo. Espere mais sinais antes de decidir."},
+  {emoji:"⚖️", nome:"Depende de você", texto:"O resultado muda conforme sua atitude. Você ainda tem poder sobre isso."},
+  {emoji:"🌙", nome:"Indefinido", texto:"A energia está confusa. Melhor não forçar uma resposta agora."},
+  {emoji:"✨", nome:"Possível", texto:"Existe chance, mas precisa de movimento, coragem e clareza."}
+];
+
+function esconderTudo(){
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("jogoTres").classList.add("hidden");
+  document.getElementById("jogoSimNao").classList.add("hidden");
+}
+
+function voltar(){
+  esconderTudo();
+  document.getElementById("menu").classList.remove("hidden");
+  document.getElementById("resultadoTres").innerHTML = "";
+  document.getElementById("resultadoSimNao").innerHTML = "";
+}
+
+function abrirTresCartas(){
+  esconderTudo();
+  document.getElementById("jogoTres").classList.remove("hidden");
+}
+
+function abrirSimNao(){
+  esconderTudo();
+  document.getElementById("jogoSimNao").classList.remove("hidden");
+}
+
+function sortear(lista){
+  return lista[Math.floor(Math.random() * lista.length)];
+}
+
+function tirarTresCartas(){
+  let resultado = document.getElementById("resultadoTres");
+  resultado.innerHTML = "";
+
+  let escolhidas = [];
+  while(escolhidas.length < 3){
+    let carta = sortear(cartas);
+    if(!escolhidas.includes(carta)){
+      escolhidas.push(carta);
+    }
+  }
+
+  let titulos = ["Passado / raiz", "Presente / energia atual", "Conselho / direção"];
+
+  escolhidas.forEach((carta, index)=>{
+    resultado.innerHTML += `
+      <div class="carta">
+        <div class="emoji">${carta.emoji}</div>
+        <div class="nome">${titulos[index]}<br>${carta.nome}</div>
+        <div class="texto">${carta.texto}</div>
+      </div>
+    `;
+  });
+}
+
+function tirarSimNao(){
+  let carta = sortear(simNao);
+
+  document.getElementById("resultadoSimNao").innerHTML = `
+    <div class="carta">
+      <div class="emoji">${carta.emoji}</div>
+      <div class="nome">${carta.nome}</div>
+      <div class="texto">${carta.texto}</div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
